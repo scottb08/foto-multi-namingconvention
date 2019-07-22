@@ -1,32 +1,32 @@
 # Naming Convention App for Shotgun Toolkit
 ![foto_obs_logo.png](./screenshots/foto_obs_logo.png)
-####Griffith Observatory and Friends of the Observatory's Satellite Studio is proud to share the Tookit Naming Convention app that was developed for our new planetarium show Signs of Life, premiering in May 2020 at Griffith Observatory, Los Angeles
-####Astronomically yours!
+#### Griffith Observatory and Friends of the Observatory's Satellite Studio is proud to share the Tookit Naming Convention app that was developed for our new planetarium show Signs of Life, premiering in May 2020 at Griffith Observatory, Los Angeles
+#### Astronomically yours!
 http://www.griffithobservatory.org/
 ***
 ![tk-multi-namingconvention.png](./screenshots/foto-multi-namingconvention.png)
 
-#####The Naming Convention Toolkit App provides a convenient and easy way for artists to work with the studio defined Toolkit naming conventions and directory structures.
-#####This is particularly useful for DCC applications that don't have Toolkit integration but need to have files put into the proper directory and follow a certain naming convention.
-#####The "Copy File to File Path" feature allows the artist to copy a single file to the "File Path" defined above. Image sequences are not currently supported.
-#####It can also be useful as a stop gap tool while the pipeline is being built out but production is moving forward.
+##### The Naming Convention Toolkit App provides a convenient and easy way for artists to work with the studio defined Toolkit naming conventions and directory structures.
+##### This is particularly useful for DCC applications that don't have Toolkit integration but need to have files put into the proper directory and follow a certain naming convention.
+##### The "Copy File to File Path" feature allows the artist to copy a single file to the "File Path" defined above. Image sequences are not currently supported.
+##### It can also be useful as a stop gap tool while the pipeline is being built out but production is moving forward.
 
-#####Feel free to reach out to me with any questions or use case issues.
+##### Feel free to reach out to me with any questions or use case issues.
 
-#####Cheers,
-#####Scott Ballard
+##### Cheers,
+##### Scott Ballard
 * scott@scottballard.net
 * https://www.linkedin.com/in/scottballard/
 ***
 ## Using the Naming Convention App
 
-![tk-multi-namingconvention instructions.png](./screenshots/foto-multi-namingconvention instructions.png)
+![tk-multi-namingconvention instructions.png](./screenshots/foto-multi-namingconvention-instructions.png)
 
 #### Step 1 - Select Shotgun Task
 Using the Toolkit context widget, select the Shotgun Task you are working with that you want to create the associated file or directory
 #### Step 2 - Select Application
 Select the DCC application you are working with. When you do, Toolkit will register the selected context and application.
-![foto-multi-namingconvention registering.png](./screenshots/foto-multi-namingconvention registering.png)
+![foto-multi-namingconvention registering.png](./screenshots/foto-multi-namingconvention-registering.png)
 #### Step 3 - Select Toolkit Template
 Select the associated Toolkit template. The description (below) might be helpful to know which template to use
 #### Step 4 - Toolkit Template Description
