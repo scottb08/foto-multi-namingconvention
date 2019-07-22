@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="res">
+    <file>sg_logo.png</file>
+    <file>block.png</file>
+    <file>copy.png</file>
+    <file>folder.png</file>
+    <file>plus.png</file>
+  </qresource>
+</RCC>

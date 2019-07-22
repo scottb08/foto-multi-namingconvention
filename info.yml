@@ -1,0 +1,83 @@
+# Copyright (c) 2013 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+
+# Metadata defining the behaviour and requirements for this engine
+
+# expected fields in the configuration file for this engine
+configuration:
+  template_definitions:
+    type: dict
+    allows_empty: True
+    description: "A dictionary that defines a definition for a Toolkit template entry. This helps artists know what a template should be used for."
+
+  restrict_entity_types_by_link:
+    type: dict
+    allows_empty: True
+    description: "Specify what entries should show up in the list of links when using the auto completer.
+      dictionary should contain two key value pairs; entity name and entity field name.
+          entity: <PublishedFile>
+          field: <entity>
+
+      For the simple case where you just want to show a given set of
+      entity types, use :meth:`restrict_entity_types`. This method is
+      a more complex restriction suitable for workflows around publishing
+      and review.
+
+      This method will look at the given link field (e.g. ``PublishedFile.entity``)
+      and inspect the shotgun schema to see which entity types are valid connections
+      to this field (e.g. in this example which entity types can you can associate
+      a publish with) and those types will appear in the list of items shown by the
+      auto completer.
+
+      This is useful when you want to use the context widget in conjunction with
+      workflows related to for example publishes, versions or notes and you want to
+      restrict the entities displayed by the auto completer to the ones that have been
+      configured in the shotgun site schema to be able to associate with the given type."
+    default_value: {}
+
+  restrict_entity_types:
+    type: list
+    description: Restrict which entity types should show up in the list of matches. List of entity names
+    values:
+      type: str
+    allows_empty: True
+    default_value: []
+
+  custom_entity_name_remap:
+    type: dict
+    allows_empty: True
+    description: ""
+    default_value: {}
+
+  tk-engines:
+    type: dict
+    allows_empty: False
+    description: "A list of tk-engines (as defined in the TK schema, can be unsupported engines)"
+
+# this app works in all engines - it does not contain
+# any host application specific commands
+supported_engines:
+
+# the Shotgun fields that this engine needs in order to operate correctly
+requires_shotgun_fields:
+
+# More verbose description of this item
+display_name: "Naming Convention Tool"
+description: "Toolkit app to helps artists with non-TK DCCs resolve file and directory paths for work files, renders, etc using TK templates"
+
+# Required minimum versions for this item to run
+requires_shotgun_version:
+requires_core_version: "v0.14.28"
+requires_engine_version:
+
+# the frameworks required to run this app
+frameworks:
+    - {"name": "tk-framework-qtwidgets", "version": "v2.x.x"}
+    - {"name": "tk-framework-shotgunutils", "version": "v5.x.x"}
