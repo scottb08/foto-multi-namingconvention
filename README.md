@@ -67,17 +67,17 @@ The description above may provide additional information about the tokens
         shot_maya_playblast
         shot_maya_render_folder
 
-####Setup
+#### Setup
 If you want to get up and running quickly, follow this simple step:
 * tank install_app Project tk-desktop https://github.com/scottb08/foto-multi-namingconvention.git
 
-####Known Issues
+#### Known Issues
 * Toolkit's context selector widget has a known issue that if the context isn't registered with TK
   the "name" of the entity isn't returned internally and the widget fails to populate any values.
 
 ## Optional Configuration Fields
 
-####template_definitions
+#### template_definitions
     type: dict
     allows_empty: True
     description: Toolkit itself does not provide a method of defining descriptions for template definitions, that would be useful for artists. 
@@ -94,7 +94,7 @@ If you want to get up and running quickly, follow this simple step:
         render$: The render output directory for the selected application
         camera pub$: The camera publish path for the selected application
     
-####restrict_entity_types_by_link
+#### restrict_entity_types_by_link
     type: dict
     allows_empty: True
     description: Specify what entries should show up in the list of links when using the auto completer.
@@ -123,7 +123,7 @@ If you want to get up and running quickly, follow this simple step:
         entity: PublishedFile
         field: entity
 
-####restrict_entity_types
+#### restrict_entity_types
     type: list
     description: Restrict which entity types should show up in the list of matches. List of entity names
     values:
@@ -136,7 +136,7 @@ If you want to get up and running quickly, follow this simple step:
         - MocapTake
         - Shot
 
-####custom_entity_name_remap
+#### custom_entity_name_remap
     type: dict
     allows_empty: True
     description: Remap the SG internal entity name to match the entity token in the TK template definition.
@@ -147,7 +147,7 @@ If you want to get up and running quickly, follow this simple step:
         MocapTake: Take (ie: TK template definition take_maya_work)
         Shot: MyShot    (ie: TK template definition myshot_maya_work)
 
-####tk-engines
+#### tk-engines
     type: dict
     allows_empty: False
     description: A dict of tk-engines (as defined in the TK schema, can be unsupported engines)
