@@ -12,6 +12,12 @@
 
 # expected fields in the configuration file for this engine
 configuration:
+  display_name:
+    type: str
+    description: The name of the app
+    allows_empty: False
+    default_value: 'Naming Convention'
+
   template_definitions:
     type: dict
     allows_empty: True
