@@ -1,6 +1,6 @@
 # Naming Convention App for Shotgun Toolkit
 ![foto_obs_logo.png](./screenshots/foto_obs_logo.png)
-#### Griffith Observatory and Friends of the Observatory's Satellite Studio is proud to share the Toolkit Naming Convention app that was developed for our new planetarium show _Signs of Life_, premiering in May 2020 at Griffith Observatory, Los Angeles
+#### The Griffith Observatory and Friends Of The Observatory Satellite Studio is proud to share the Toolkit Naming Convention app that was developed for _Signs of Life_. This new show premieres in May, 2020, in the Samuel Oschin Planetarium at Griffith Observatory, Los Angeles.
 #### Astronomically yours!
 http://www.griffithobservatory.org/
 <br>http://www.friendsoftheobservatory.com
