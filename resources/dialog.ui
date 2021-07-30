@@ -328,10 +328,13 @@ font: 75 10pt &quot;Arial&quot;;</string>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="copyFileLineEdit"/>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="copyFilePathOpenButton">
+       <property name="toolTip">
+        <string>Browse to a file to copy</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -342,7 +345,10 @@ font: 75 10pt &quot;Arial&quot;;</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="copyFileToFileButton">
+       <property name="toolTip">
+        <string>Copy given file (left) to the file path described above</string>
+       </property>
        <property name="text">
         <string/>
        </property>

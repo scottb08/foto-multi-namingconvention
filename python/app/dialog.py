@@ -178,9 +178,6 @@ class AppDialog(QtGui.QWidget):
         func = lambda x=self.ui.filePathLineEdit: self.create_file_on_disk(x)
         self.ui.createFileButton.released.connect(func)
 
-        func = lambda x=self.ui.filePathLineEdit: self.create_file_on_disk(x)
-        self.ui.createDirectoryButton.released.connect(func)
-
         self.ui.copyFilePathOpenButton.released.connect(self.browse_file)
         self.ui.copyFileToFileButton.released.connect(self.copy_file_to_file_path)
 
