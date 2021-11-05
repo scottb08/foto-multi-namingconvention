@@ -188,7 +188,7 @@ class AppDialog(QtGui.QWidget):
 
         self.ui.appComboBox.addItem(QtGui.QIcon(':/res/block.png'), 'Select Application')
 
-        app_keys = self.applications.keys()
+        app_keys = list(self.applications.keys())
         app_keys.sort()
 
         for appKey in app_keys:
