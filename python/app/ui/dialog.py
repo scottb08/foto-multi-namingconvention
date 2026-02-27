@@ -8,9 +8,14 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from tank.platform.qt import QtCore
+for name, cls in QtCore.__dict__.items():
+    if isinstance(cls, type): globals()[name] = cls
+
+from tank.platform.qt import QtGui
+for name, cls in QtGui.__dict__.items():
+    if isinstance(cls, type): globals()[name] = cls
+
 
 from  . import resources_rc
 
@@ -96,7 +101,6 @@ class Ui_Form(object):
         self.line_4.setFrameShadow(QFrame.Sunken)
 
         self.gridLayout.addWidget(self.line_4, 3, 0, 1, 2)
-
 
         self.verticalLayout.addWidget(self.widget_2)
 
@@ -204,7 +208,6 @@ class Ui_Form(object):
 
         self.gridLayout_3.addWidget(self.fileNameLineEdit, 0, 1, 1, 3)
 
-
         self.verticalLayout.addWidget(self.filePathWidgetGroup)
 
         self.line_5 = QFrame(Form)
@@ -240,9 +243,7 @@ class Ui_Form(object):
 
         self.horizontalLayout.addWidget(self.copyFileToFileButton)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
-
 
         self.retranslateUi(Form)
 
@@ -300,4 +301,3 @@ class Ui_Form(object):
 #endif // QT_CONFIG(tooltip)
         self.copyFileToFileButton.setText("")
     # retranslateUi
-

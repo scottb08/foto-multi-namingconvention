@@ -21,6 +21,8 @@ import sgtk
 from sgtk.platform.qt import QtCore, QtGui
 from .ui.dialog import Ui_Form
 
+from tank import TankError
+
 # import the context_selector module from the qtwidgets framework
 context_selector = sgtk.platform.import_framework("tk-framework-qtwidgets", "context_selector")
 
@@ -92,13 +94,13 @@ class AppDialog(QtGui.QWidget):
             if 'entity' not in self.restrict_entity_types_by_link or 'field' not in self.restrict_entity_types_by_link:
                 raise ValueError('"entity" or "field" key not defined for restrict_entity_types_by_link')
 
-            self.log.info('restrict_entity_types_by_link to entity: {}, field: {}'.format(self.restrict_entity_types_by_link['entity'],
-                                                                                          self.restrict_entity_types_by_link['field']))
+            self.log.info(f"restrict_entity_types_by_link to entity: {self.restrict_entity_types_by_link['entity']}, "
+                          f"field: {self.restrict_entity_types_by_link['field']}")
 
         if self.restrict_entity_types and self.restrict_entity_types_by_link:
             raise ValueError('Please use either restrict_entity_types_by_link OR restrict_entity_types, but not both.')
 
-        # via the self._app handle we can for example access:
+        # via the self._app handle, we can, for example, access:
         # - The engine, via self._app.engine
         # - A Shotgun API instance, via self._app.shotgun
         # - A tk API instance, via self._app.tk
@@ -114,7 +116,7 @@ class AppDialog(QtGui.QWidget):
         self._context_widget = context_selector.ContextWidget(self)
         self._context_widget.set_up(self._task_manager)
 
-        # Disable "Link" widget in context selector so end user have to use "Task" widget instead
+        # Disable "Link" widget in context selector so end user has to use "Task" widget instead
         self._context_widget.ui.link_label.setEnabled(True)
         self._context_widget.ui.link_search.setEnabled(True)
         self._context_widget.ui.link_display.setEnabled(True)
@@ -189,7 +191,7 @@ class AppDialog(QtGui.QWidget):
         self.ui.appComboBox.addItem(QtGui.QIcon(':/res/block.png'), 'Select Application')
 
         app_keys = list(self.applications.keys())
-        app_keys.sort()
+        sorted(app_keys)
 
         for appKey in app_keys:
             self.ui.appComboBox.addItem(QtGui.QIcon(':/res/sg_logo.png'), appKey, self.applications[appKey])
@@ -210,7 +212,7 @@ class AppDialog(QtGui.QWidget):
 
         templates = tk.templates
 
-        # Support non-engine template definitions. If None, then use engine key name instead. ie: Data > data > take_data
+        # Support non-engine template definitions. If None, then use the engine key name instead. ie: Data > data > take_data
         app_name = str(self.ui.appComboBox.itemData(self.ui.appComboBox.currentIndex()))
         if app_name:
             app_name = app_name.lower().replace(' ', '').replace('tk-', '')
@@ -222,18 +224,18 @@ class AppDialog(QtGui.QWidget):
         # Remap entity name
         entity_type = self.custom_entity_name_remap.get(entity_type, entity_type).lower()
 
-        regex = '%s_%s' % (entity_type, app_name)
+        regex = f'{entity_type}_{app_name}'
 
         active_templates = {}
 
-        for k, v in templates.iteritems():
+        for k, v in templates.items():
             if re.search(regex, k):
                 active_templates[k] = v
 
         self.ui.tkTemplateComboBox.clear()
 
         active_keys = active_templates.keys()
-        active_keys.sort()
+        sorted(active_keys)
 
         self.ui.tkTemplateComboBox.addItem(QtGui.QIcon(':/res/block.png'), 'Select Template')
 
@@ -259,7 +261,7 @@ class AppDialog(QtGui.QWidget):
         curr_templ = self.ui.tkTemplateComboBox.itemText(self.ui.tkTemplateComboBox.currentIndex())
         self.ui.descriptionLabel.setText('')
 
-        for k, v in self.template_definitions.iteritems():
+        for k, v in self.template_definitions.items():
             if re.search(k, curr_templ, re.IGNORECASE):
                 self.ui.descriptionLabel.setText(v)
 
@@ -272,15 +274,14 @@ class AppDialog(QtGui.QWidget):
         self.clear_extra_token_widgets()
 
         self.context = context
-        self.log.info('Context, source: %s' % self.context.source_entity)
-        self.log.info('Context, task: %s' % self.context.task)
+        self.log.info(f'Context, source: {self.context.source_entity}')
+        self.log.info(f'Context, task: {self.context.task}')
 
         self.update_ui()
 
     def update_tk_context(self):
         """
-        Register selected context with Toolkit
-        :return:
+        Register the selected context with Toolkit
         """
 
         if self.ui.appComboBox.currentIndex() == 0:
@@ -288,7 +289,7 @@ class AppDialog(QtGui.QWidget):
 
         tkengine = self.ui.appComboBox.itemData(self.ui.appComboBox.currentIndex())
 
-        # Try to get as deep into valid context
+        # Try to get as deep into a valid context
         if self.context.task:
             typ = self.context.task['type']
             idd = self.context.task['id']
@@ -301,17 +302,24 @@ class AppDialog(QtGui.QWidget):
             typ = self.context.source_entity['type']
             idd = self.context.source_entity['id']
 
-        try:
-            self._overlay_widget.show_message('<h2 style="color:#4383a8">Registering context with Toolkit, please wait...</h2>')
-            QtGui.QApplication.instance().processEvents()
-            self.log.info('Creating folder structure on disk')
-            self._app.sgtk.create_filesystem_structure(typ, idd, engine=tkengine)
+        else:
+            raise TankError('Unable to determine Context Entity and ID, check current Context.')
 
-        except:
-            pass
+        # Check if Context is already registered in Toolkit, if not, then register it
+        paths = self._app.sgtk.paths_from_entity(typ, idd)
 
-        finally:
-            self._overlay_widget.hide()
+        if not paths:
+            try:
+                self._overlay_widget.show_message('<h2 style="color:#4383a8">Registering context with Toolkit, please wait...</h2>')
+                QtGui.QApplication.instance().processEvents()
+                self.log.info('Creating folder structure on disk')
+                self._app.sgtk.create_filesystem_structure(typ, idd, engine=tkengine)
+
+            except:
+                pass
+
+            finally:
+                self._overlay_widget.hide()
 
         self.ctx = self._app.sgtk.context_from_entity(typ, idd)
 
@@ -338,8 +346,8 @@ class AppDialog(QtGui.QWidget):
 
         for key in missing_keys:
             if key in template.keys:
-                keyObj = template.keys[key]
-                missing_keys_dict[key] = keyObj
+                key_obj = template.keys[key]
+                missing_keys_dict[key] = key_obj
 
         parent = self.ui.extraTokensWidget
         parent_lay = self.ui.extraTokensWidgetLayout
@@ -347,7 +355,7 @@ class AppDialog(QtGui.QWidget):
         self.clear_extra_token_widgets()
 
         keys = missing_keys_dict.keys()
-        keys.sort()
+        sorted(keys)
 
         row_cnt = 0
 
@@ -358,19 +366,48 @@ class AppDialog(QtGui.QWidget):
         else:
             for key in keys:
                 label = QtGui.QLabel(str(key), parent=parent)
-                lineedit = QtGui.QLineEdit(str(missing_keys_dict[key].default), parent=parent)
-                lineedit.data = missing_keys_dict[key]   # Not ideal to store to object, but QLabel has no data storage method
+                tk_key = missing_keys_dict[key]
 
-                lineedit.editingFinished.connect(self.update_template_file_path)
+                default_value = tk_key.default
+
+                # Combobox for TK Template Keys that have choices
+                choices = tk_key.choices
+                if choices:
+                    widget = QtGui.QComboBox(parent=parent)
+                    for choice in choices:
+                        widget.addItem(choice, tk_key)
+
+                    widget.currentIndexChanged.connect(self.update_template_file_path)
+
+                else:   # QlineEdit for all other TK Template Keys
+                    if default_value:
+                        widget = QtGui.QLineEdit(str(default_value), parent=parent)
+                        widget.data = tk_key
+
+                    else:
+                        widget = QtGui.QLineEdit('', parent=parent)
+
+                    # Set Validator for TK Key types
+                    if type(tk_key) == sgtk.templatekey.IntegerKey:
+                        regex = QtCore.QRegularExpression('[0-9]+')
+                        validator = QtGui.QRegularExpressionValidator(regex, widget)
+                        widget.setValidator(validator)
+
+                    elif type(tk_key) == sgtk.templatekey.StringKey:
+                        regex = QtCore.QRegularExpression('[a-zA-Z0-9]+')
+                        validator = QtGui.QRegularExpressionValidator(regex, widget)
+                        widget.setValidator(validator)
+
+                    widget.editingFinished.connect(self.update_template_file_path)
 
                 parent_lay.addWidget(label, row_cnt, 0)
-                parent_lay.addWidget(lineedit, row_cnt, 1)
+                parent_lay.addWidget(widget, row_cnt, 1)
 
                 row_cnt += 1
 
     def get_extra_token_definitions(self):
         """
-        Loop through all child qlabels gathering user input values
+        Loop through all child widgets gathering user input values
         :return:
         """
         parent = self.ui.extraTokensWidget
@@ -379,9 +416,15 @@ class AppDialog(QtGui.QWidget):
         valid = True
 
         for widget in parent.children():
-            if type(widget) == QtGui.QLineEdit:
+            if type(widget) in [QtGui.QLineEdit, QtGui.QComboBox]:
 
-                value = widget.text()
+                if isinstance(widget, QtGui.QLineEdit):
+                    widget_data = widget.data
+                    value = widget.text()
+
+                else:
+                    value = widget.currentText()
+                    widget_data = widget.currentData()
 
                 if not value:
                     widget.setStyleSheet('border: 1px solid red; border-radius: 6px;')
@@ -389,11 +432,11 @@ class AppDialog(QtGui.QWidget):
                 else:
                     widget.setStyleSheet('')
 
-                    if type(widget.data) == sgtk.templatekey.IntegerKey:
-                        missing_keys[widget.data.name] = int(value)
+                    if isinstance(widget_data, sgtk.templatekey.IntegerKey):
+                        missing_keys[widget_data.name] = int(value)
 
-                    elif type(widget.data) == sgtk.templatekey.StringKey:
-                        missing_keys[widget.data.name] = value
+                    elif isinstance(widget_data, sgtk.templatekey.StringKey):
+                        missing_keys[widget_data.name] = value
 
         return missing_keys, valid
 
@@ -468,12 +511,11 @@ class AppDialog(QtGui.QWidget):
         self.ui.filePathLineEdit.setText(filepath)
 
     def sanitize_file_path(self, path):
-        illegalchars = ['<', '>', '|', '*', '"', '?']
-
-        for x in illegalchars:
-            path = path.replace(x, '')
-
-        return path
+        # This pattern matches any character that is *not* a letter (a-z, A-Z) or a digit (0-9).
+        # The `^` inside the brackets negates the set.
+        pattern = r'[^a-zA-Z0-9/\\:-]'
+        # Replace all matches with an empty string
+        return re.sub(pattern, '', path)
 
     def copy_path_to_clipboard(self, widget):
         """
@@ -482,8 +524,7 @@ class AppDialog(QtGui.QWidget):
         :return:
         """
         cb = QtGui.QApplication.clipboard()
-        cb.clear(mode=cb.Clipboard)
-        cb.setText(self.sanitize_file_path(widget.text()), mode=cb.Clipboard)
+        cb.setText(self.sanitize_file_path(widget.text()))
 
     def open_file_path(self, widget):
 
@@ -525,26 +566,24 @@ class AppDialog(QtGui.QWidget):
                 else:
                     dirpath = path
 
-                # Create directory structure first
+                # Create a directory structure first
                 if not os.path.exists(dirpath):
                     os.makedirs(dirpath)
-                    self.log.info('Created directories: %s' % dirpath)
+                    self.log.info(f'Created directories: {dirpath}')
 
                 if is_file:
-                    file(path, 'w').close()
-                    self.log.info('Created file: %s' % path)
+                    open(path, 'w').close()
+                    self.log.info(f'Created file: {path}')
 
             QtGui.QMessageBox.information(self, 'Success!',
-                                          '<h3>Created directory/file:</h3><br>{}</br>'.format(path),
+                                          f'<h3>Created directory/file:</h3><br>{path}</br>',
                                           QtGui.QMessageBox.Ok)
 
         except Exception as err:
             QtGui.QMessageBox.critical(self, 'Failure!',
-                                       '<h3>The directory/file failed to be created: {}</h3><br>{}</br>'.format(path,
-                                                                                                                str(err)),
+                                       f'<h3>The directory/file failed to be created: {path}</h3><br>{err}</br>',
                                        QtGui.QMessageBox.Ok)
-            self.log.error('Failed to create directory/file: {}'.format(path))
-            self.log.error(str(err))
+            self.log.error(f'Failed to create directory/file: {path}\n{err}')
 
     @staticmethod
     def is_path_file(path):
@@ -567,7 +606,7 @@ class AppDialog(QtGui.QWidget):
             self.log.warn('File doesnt not exist on disk, unable to copy: %s' % src_path)
             return
 
-        # Check if file exists
+        # Check if the file exists
         if os.path.exists(dst_path):
             reply = QtGui.QMessageBox.question(self, 'File Exists',
                                                'The file already exists, do you want to overwrite it?',
@@ -576,16 +615,16 @@ class AppDialog(QtGui.QWidget):
             if reply == QtGui.QMessageBox.Yes:
                 try:
                     os.remove(dst_path)
-                    self.log.info('Removed existing file: {}'.format(dst_path))
+                    self.log.info(f'Removed existing file: {dst_path}')
                 except Exception as err:
-                    self.log.error('Failed to remove existing file: %s'.format(dst_path))
+                    self.log.error(f'Failed to remove existing file: {dst_path}')
                     self.log.error(str(err))
             else:
                 return
 
         # Copy file
         try:
-            self.log.info('Copying: {} > {}'.format(src_path, dst_path))
+            self.log.info(f'Copying: {src_path} >> {dst_path}')
 
             dirname = os.path.dirname(dst_path)
             if not os.path.exists(dirname):
@@ -601,10 +640,9 @@ class AppDialog(QtGui.QWidget):
 
         except Exception as err:
             QtGui.QMessageBox.critical(self, 'Failure!',
-                                       '<h3>The file failed to be copied</h3><br>{}</br>'.format(str(err)),
+                                       f'<h3>The file failed to be copied</h3><br>{err}</br>',
                                        QtGui.QMessageBox.Ok)
-            self.log.error('Failed to copy: {} > {}'.format(src_path, dst_path))
-            self.log.error(str(err))
+            self.log.error(f'Failed to copy: {src_path} >> {dst_path}\n{err}')
 
     def closeEvent(self, event):
         """
@@ -619,10 +657,10 @@ class AppDialog(QtGui.QWidget):
         shotgun_globals.unregister_bg_task_manager(self._task_manager)
 
         try:
-            # shut down main threadpool
+            # shut down the main threadpool
             self._task_manager.shut_down()
-        except Exception:
-            self.log.exception("Error running closeEvent()")
+        except Exception as err:
+            self.log.exception(f"Error running closeEvent(). {err}")
 
         # ensure the context widget's recent contexts are saved
         self._context_widget.save_recent_contexts()
